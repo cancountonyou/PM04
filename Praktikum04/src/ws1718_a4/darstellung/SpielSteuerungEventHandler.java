@@ -1,27 +1,38 @@
 package ws1718_a4.darstellung;
 
-import java.util.Observable;
-import java.util.Observer;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.text.TextFlow;
+import ws1718_a4.controller.Controller;
 
-import javafx.scene.canvas.Canvas;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import ws1718_a4.basis.Konstanten;
-import ws1718_a4.basis.SpielZustand;
-
-public class SpielSteuerungEventHandler extends Canvas implements Observer {
-
-	public SpielSteuerungEventHandler() {
-		Pane steuerungsGrid = new GridPane();
-		
-	
-	
-	}
+public class SpielSteuerungEventHandler extends SpielSteuerung implements EventHandler<ActionEvent> {
 
 	@Override
-	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
-		
+	public void handle(ActionEvent event) {
+		Object ereignisverursacher = event.getSource();
+		if (ereignisverursacher instanceof Button) {
+			Button button = (Button) ereignisverursacher;
+			switch (button.getText()) {
+			case "Spiel Neu Starten":
+				neuStart();
+			case "Ok":
+			
+			case "Löschen":
+			}
+
+		} else if (ereignisverursacher instanceof TextFlow) {
+
+		}
+
 	}
 
+	public void neuStart() {
+		NeuesSpiel spiel = new NeuesSpiel();
+	}
+
+	public void anweisungsCheck(){
+		Controller c1 = new Controller(null);
+		getAusgeschrieben().setText(c1.befehlVerarbeiten(getSpielanweisung().getChildren().toString()));
+	}
 }

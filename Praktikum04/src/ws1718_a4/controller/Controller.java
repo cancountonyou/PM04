@@ -59,7 +59,7 @@ public class Controller {
     }
 
     if (befehlskette.size() == 0) {
-      return "UngÃ¼ltige Befehle: " + text;
+      return "Ungültige Befehle: " + text;
     }
 
     String rueckmeldeung = wurzelknoten.verarbeite(befehlskette);
