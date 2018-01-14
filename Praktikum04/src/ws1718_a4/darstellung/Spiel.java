@@ -4,20 +4,39 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import ws1718_a4.basis.Konstanten;
+import ws1718_a4.assets.Assets;
+import ws1718_a4.basis.Konstanten.SpielStatus;
+import ws1718_a4.basis.Level;
+import ws1718_a4.basis.LevelIO;
+import ws1718_a4.basis.Neuzeichnen;
+import ws1718_a4.basis.SpielZustand;
+import ws1718_a4.controller.Controller;
 
 public class Spiel extends Application {
 	private SpielfeldRenderer spielfeld;
+	private SpielSteuerung spielsteuerung;
+	public static String leveldatei = "level01.json";
 
 	@Override
 	public void start(Stage buehne) throws Exception {
+		Controller c1 = new Controller((Neuzeichnen) spielfeld::neuzeichnen);
 		BorderPane wurzel = new BorderPane();
-		Scene szene = new Scene(wurzel, 700	, 500);
+		spielfeld = new SpielfeldRenderer();
+		spielsteuerung = new SpielSteuerung(c1);
+		wurzel.setCenter(spielfeld);
+		wurzel.setLeft(spielsteuerung.getLayoutPane());
+		Level level = LevelIO.levelLaden(Assets.class.getResourceAsStream(leveldatei));
+		SpielZustand.getInstance().setAktuellerLevel(level);
+		SpielZustand.getInstance().setSpielStatus(SpielStatus.SPIELER_ZUG);
+		Scene szene = new Scene(wurzel, 700, 500);
 		buehne.setTitle("WS 17/18 - PM2 - Rette den Elf!");
 		buehne.setScene(szene);
-		 BorderPane ui = new BorderPane();
-		   ui.setCenter(spielfeld);
-		   ui.setLeft();
+		buehne.show();
+		spielfeld.neuzeichnen();
+	}
+
+	public static void main(String[] args) {
+		launch();
 	}
 
 }

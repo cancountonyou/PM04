@@ -6,16 +6,16 @@ import javafx.scene.control.Button;
 import javafx.scene.text.TextFlow;
 import ws1718_a4.controller.Controller;
 
-public class SpielSteuerungEventHandler extends SpielSteuerung implements EventHandler<ActionEvent> {
+public class SpielSteuerungEventHandler {
 
-	@Override
-	public void handle(ActionEvent event) {
+
+	public static void handle(ActionEvent event) {
 		Object ereignisverursacher = event.getSource();
 		if (ereignisverursacher instanceof Button) {
 			Button button = (Button) ereignisverursacher;
 			switch (button.getText()) {
-			case "Spiel Neu Starten":
-				neuStart();
+			case "Spiel Neu Starten":neuStart();
+				
 			case "Ok":
 			
 			case "Löschen":
@@ -27,8 +27,8 @@ public class SpielSteuerungEventHandler extends SpielSteuerung implements EventH
 
 	}
 
-	public void neuStart() {
-		NeuesSpiel spiel = new NeuesSpiel();
+	public static void neuStart() {
+		
 	}
 
 	public void anweisungsCheck(){
