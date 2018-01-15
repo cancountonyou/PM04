@@ -1,6 +1,7 @@
 package ws1718_a4.darstellung;
 
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -10,6 +11,8 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextFlow;
 import ws1718_a4.assets.Assets;
@@ -29,11 +32,14 @@ public class SpielSteuerung {
 
 	private TextFlow befehle;
 	
-	private AnchorPane layoutPane;
+	private VBox layoutPane;
+	
+	private HBox okLöschen;
 
 	public SpielSteuerung(Controller c1) {
-		layoutPane = new AnchorPane();
-		layoutPane.setMinSize(200, 400);
+		layoutPane = new VBox(10);
+		layoutPane.setPadding(new Insets(20));
+		
 
 		spielNeuStarten = new Button("Spiel neu Starten!");
 		spielNeuStarten.setOnAction((ereignis) -> {
@@ -43,13 +49,11 @@ public class SpielSteuerung {
 			spielanweisung.clear();
 			ausgeschrieben.clear();
 		});
-		spielNeuStarten.setPrefSize(Button.USE_COMPUTED_SIZE, Button.USE_COMPUTED_SIZE);
 		layoutPane.getChildren().add(spielNeuStarten);
-		AnchorPane.setLeftAnchor(spielNeuStarten, 41.0);
-		AnchorPane.setTopAnchor(spielNeuStarten, 37.0);
+	
 
 		befehle = new TextFlow();
-		befehle.setPrefSize(145, 235);
+		
 		for (Befehl befehl : Konstanten.Befehl.values()) {
 			Label label = new Label(befehl.name());
 			label.setTextFill(Color.BLACK);
@@ -70,8 +74,7 @@ public class SpielSteuerung {
 
 		}
 		layoutPane.getChildren().add(befehle);
-		AnchorPane.setLeftAnchor(befehle, 15.0);
-		AnchorPane.setTopAnchor(befehle, 81.0);
+		
 
 		spielanweisung = new TextField();
 		spielanweisung.setOnDragOver(new EventHandler<DragEvent>() {
@@ -100,41 +103,41 @@ public class SpielSteuerung {
 			}
 		});
 		layoutPane.getChildren().add(spielanweisung);
-		AnchorPane.setLeftAnchor(spielanweisung, 15.0);
-		AnchorPane.setTopAnchor(spielanweisung, 251.0);
-
+	
+		
+		okLöschen = new HBox();
+		okLöschen.setSpacing(10);
 		ok = new Button("OK");
 		ok.setOnAction((ereignis) -> {
-			AnweisungsCheck zuchecken = new AnweisungsCheck(spielanweisung.getText());
+			String cmd = spielanweisung.getText();
+			AnweisungsCheck zuchecken = new AnweisungsCheck(cmd);
 			if (zuchecken.check()) {
-				String mitteilung = c1.befehlVerarbeiten(spielanweisung.getText());
+				String mitteilung = c1.befehlVerarbeiten(cmd);
 				ausgeschrieben.setText(mitteilung);
 			} else {
 				ausgeschrieben.setText("Ungültiger Befehl");
 			}
 		});
-		ok.setPrefSize(Button.USE_COMPUTED_SIZE, Button.USE_COMPUTED_SIZE);
-		layoutPane.getChildren().add(ok);
-		AnchorPane.setLeftAnchor(ok, 19.0);
-		AnchorPane.setTopAnchor(ok, 329.0);
+		
+		okLöschen.getChildren().add(ok);
+		
 
 		löschen = new Button("löschen");
 		löschen.setOnAction((ereignis) -> {
 			spielanweisung.clear();
 		});
-		löschen.setPrefSize(Button.USE_COMPUTED_SIZE, Button.USE_COMPUTED_SIZE);
-		layoutPane.getChildren().add(löschen);
-		AnchorPane.setLeftAnchor(löschen, 66.0);
-		AnchorPane.setTopAnchor(löschen, 329.0);
+		
+		okLöschen.getChildren().add(löschen);
+		
+		layoutPane.getChildren().add(okLöschen);
+	
 
 		ausgeschrieben = new TextField();
-		
 		layoutPane.getChildren().add(ausgeschrieben);
-		AnchorPane.setLeftAnchor(ausgeschrieben, 17.0);
-		AnchorPane.setTopAnchor(ausgeschrieben, 367.0);
+		
 	}
 	
-	public AnchorPane getLayoutPane() {
+	public VBox getLayoutPane() {
 		return this.layoutPane;
 	}
 }
