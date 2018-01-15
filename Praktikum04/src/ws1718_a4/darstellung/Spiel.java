@@ -1,3 +1,9 @@
+/**
+* Praktikum PM2, WS17/18
+* Gruppe: Daniel Biederman, Katerina Milenkovski 
+* Aufgabe: Aufgabenblatt 4
+* 
+*/
 package ws1718_a4.darstellung;
 
 import javafx.application.Application;
@@ -12,18 +18,34 @@ import ws1718_a4.basis.LevelIO;
 import ws1718_a4.basis.Neuzeichnen;
 import ws1718_a4.basis.SpielZustand;
 import ws1718_a4.controller.Controller;
-
+/**
+ * 
+ * Application zum Starten eines Spieles.
+ *  
+ * @author Daniel Biedermann, Katerina Milenkovski
+ *
+ */
 public class Spiel extends Application {
 	private SpielfeldRenderer spielfeld;
 	private SpielSteuerung spielsteuerung;
 	public static String leveldatei = "level01.json";
 
+	/**
+	 * Start-Methode.Erzeugt Fenster und zugehörige Komponenten und startet bei Aufruf ein Spiel.
+	 * 
+	 * @param Stage
+	 * @exception Exception
+	 * 
+	 */
 	@Override
 	public void start(Stage buehne) throws Exception {
+		//Erstellen der Spiel Komponenten , Spielfeld / Controller / Spielsteuerung
 		spielfeld = new SpielfeldRenderer();
 		Controller c1 = new Controller((Neuzeichnen) spielfeld::neuzeichnen);
 		spielsteuerung = new SpielSteuerung(c1);
 		BorderPane wurzel = new BorderPane();
+		
+		//Erstellung des Fensters, initialiseren des Levels und neuzeichnen des Spielfelds
 		Scene szene = new Scene(wurzel, Konstanten.FENSTER_BREITE,Konstanten.FENSTER_HOEHE);
 		buehne.setTitle("WS 17/18 - PM2 - Rette den Elf!");
 		wurzel.setCenter(spielfeld);

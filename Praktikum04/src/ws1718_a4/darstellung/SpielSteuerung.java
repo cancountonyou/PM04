@@ -1,3 +1,10 @@
+/**
+* Praktikum PM2, WS17/18
+* Gruppe: Daniel Biederman, Katerina Milenkovski 
+* Aufgabe: Aufgabenblatt 4
+* 
+*/
+
 package ws1718_a4.darstellung;
 
 import javafx.event.EventHandler;
@@ -5,6 +12,8 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -24,49 +33,73 @@ import ws1718_a4.basis.Konstanten.Befehl;
 import ws1718_a4.basis.Konstanten.SpielStatus;
 import ws1718_a4.controller.Controller;
 
+/**
+ * Erzeug eine Gui Spielsteurungseinheit. Sie besteht jeweils einer Anordnung
+ * von Knöpfen und Textfeldern zur Interaktion.
+ *
+ * @author Daniel Biedermann, Katerina Milenkovski
+ *
+ */
+
 public class SpielSteuerung {
-
+	/**
+	 * Knöpfe zur Bedienung des Spiels.
+	 */
 	private Button spielNeuStarten, ok, löschen;
-
-	private TextField  spielanweisung;
-
-	private TextFlow befehle,ausgeschrieben;
-	
+	/**
+	 * Textfeld zum Platzieren der Spielanweisung.
+	 */
+	private TextField spielanweisung;
+	/**
+	 * TextFelder mit möglichen Befehlen bzw. Ausgabefeld der Mitteilung nach
+	 * abgeschlossener Spielanweisung.
+	 */
+	private TextFlow befehle, ausgabe;
+	/**
+	 * Übergeordnete VBox.
+	 */
 	private VBox layoutPane;
-	
+	/**
+	 * Übergeordnete HBox für Buttons.
+	 */
 	private HBox okLöschen;
 
-	public SpielSteuerung(Controller c1) {
+	/**
+	 * Konstruktor der Spielsteuerung.
+	 * 
+	 * @param controller
+	 */
+	public SpielSteuerung(Controller controller) {
+		// Erstellen der übergeordneten VBox
 		layoutPane = new VBox(10);
 		layoutPane.setPadding(new Insets(20));
-	
-
-		ausgeschrieben = new TextFlow();
-		
-		
-
+		// Erstellen des AusgabeFelds
+		ausgabe = new TextFlow();
+		// Erstellen des "Spiel neu starten"-Buttons, Zuordnung der Funktion
+		// beim Klick
 		spielNeuStarten = new Button("Spiel neu Starten!");
 		spielNeuStarten.setOnAction((ereignis) -> {
 			Level level = LevelIO.levelLaden(Assets.class.getResourceAsStream(Spiel.leveldatei));
 			SpielZustand.getInstance().setAktuellerLevel(level);
 			SpielZustand.getInstance().setSpielStatus(SpielStatus.SPIELER_ZUG);
 			spielanweisung.clear();
-			ausgeschrieben.getChildren().clear();
+			ausgabe.getChildren().clear();
 		});
 		layoutPane.getChildren().add(spielNeuStarten);
-	
-
+		// Erstelen des Feldes für Befehle, Füllen des Feldes mit den Befehlen
 		befehle = new TextFlow();
 		befehle.setPrefWidth(200);
-		
 		for (Befehl befehl : Konstanten.Befehl.values()) {
 			Label label = new Label(befehl.name());
 			label.setTextFill(Color.BLACK);
-			label.setStyle("-fx-background-color: rgba(231, 116, 113, 1);"); // Color code "Light Coral"
+			label.setStyle("-fx-background-color: rgba(231, 116, 113, 1);"); // Color
+																				// code
+																				// "Light
+																				// Coral"
 			befehle.getChildren().add(label);
 			Label placeholder = new Label(" ");
 			befehle.getChildren().add(placeholder);
-
+			// Zuweisung der Drag-Action für jeden möglichen Befehl
 			label.setOnDragDetected(new EventHandler<MouseEvent>() {
 				public void handle(MouseEvent event) {
 					Dragboard db = label.startDragAndDrop(TransferMode.ANY);
@@ -76,11 +109,11 @@ public class SpielSteuerung {
 					event.consume();
 				}
 			});
-
 		}
 		layoutPane.getChildren().add(befehle);
-		
-
+		// Textfeld für Spielanweisung und Überprüfung auf richtige Quelle des
+		// Objekts Initialisierung als Möglichkeit für
+		// den Drop
 		spielanweisung = new TextField();
 		spielanweisung.setOnDragOver(new EventHandler<DragEvent>() {
 			public void handle(DragEvent event) {
@@ -90,7 +123,7 @@ public class SpielSteuerung {
 				event.consume();
 			}
 		});
-
+		// Durchführen des Drop-Events und String-Ausgabe im Spielanweisungsfeld
 		spielanweisung.setOnDragDropped(new EventHandler<DragEvent>() {
 			public void handle(DragEvent event) {
 				Dragboard db = event.getDragboard();
@@ -108,43 +141,62 @@ public class SpielSteuerung {
 			}
 		});
 		layoutPane.getChildren().add(spielanweisung);
-	
-		
+		// Erstellen der HBox für die Buttons Ok und Löschen
 		okLöschen = new HBox();
 		okLöschen.setSpacing(10);
 		ok = new Button("OK");
+		// Ereignisverarbeitung beim Klicken des Ok-Buttons, Check auf
+		// Richtigkeit des Ausdruck und ggf Ausgabe- und Alert-Field- Anzeige
 		ok.setOnAction((ereignis) -> {
-			ausgeschrieben.getChildren().clear();
+			ausgabe.getChildren().clear();
 			String cmd = spielanweisung.getText();
 			AnweisungsCheck zuchecken = new AnweisungsCheck(cmd);
 			if (zuchecken.check()) {
-				String mitteilung = c1.befehlVerarbeiten(cmd);
+				String mitteilung = controller.befehlVerarbeiten(cmd);
 				Label mitteilungLabel = new Label(mitteilung);
-				ausgeschrieben.getChildren().add(mitteilungLabel);
+				ausgabe.getChildren().add(mitteilungLabel);
+				if (SpielZustand.getInstance().getSpielStatus() == SpielStatus.GEWONNEN) {
+					this.benachrichtigung("Gewonnen", "Gluekwunsch sie haben Gewonnen");
+				} else if (SpielZustand.getInstance().getSpielStatus() == SpielStatus.VERLOREN) {
+					this.benachrichtigung("Verloren",
+							"Leider verloren, vielleich hilft dir das hier https://www.123test.com/iq-test/");
+				}
 			} else {
 				Label mitteilungLabel = new Label("Ungültiger Befehl");
-				ausgeschrieben.getChildren().add(mitteilungLabel);
+				ausgabe.getChildren().add(mitteilungLabel);
 			}
 		});
-		
 		okLöschen.getChildren().add(ok);
-		
-
+		// Erstellen des Löschen-Buttons und Funktionalität
 		löschen = new Button("löschen");
 		löschen.setOnAction((ereignis) -> {
 			spielanweisung.clear();
 		});
-		
 		okLöschen.getChildren().add(löschen);
-		
 		layoutPane.getChildren().add(okLöschen);
-	
-
-		layoutPane.getChildren().add(ausgeschrieben);
-		
+		layoutPane.getChildren().add(ausgabe);
 	}
-	
+
+	/**
+	 * Getter des Layouts zur Verwendung im Spiel
+	 * 
+	 * @return VBox
+	 */
 	public VBox getLayoutPane() {
 		return this.layoutPane;
+	}
+
+	/**
+	 * Benachrichtigungs-Methode, die einen Alert schaltet
+	 * 
+	 * @param name
+	 * @param text
+	 */
+	public void benachrichtigung(String name, String text) {
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle(name);
+		alert.setHeaderText(null);
+		alert.setContentText(text);
+		alert.showAndWait();
 	}
 }
