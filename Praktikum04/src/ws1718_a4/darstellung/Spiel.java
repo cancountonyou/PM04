@@ -22,15 +22,15 @@ public class Spiel extends Application {
 	public void start(Stage buehne) throws Exception {
 		spielfeld = new SpielfeldRenderer();
 		Controller c1 = new Controller((Neuzeichnen) spielfeld::neuzeichnen);
-		BorderPane wurzel = new BorderPane();
 		spielsteuerung = new SpielSteuerung(c1);
+		BorderPane wurzel = new BorderPane();
+		Scene szene = new Scene(wurzel, Konstanten.FENSTER_BREITE,Konstanten.FENSTER_HOEHE);
+		buehne.setTitle("WS 17/18 - PM2 - Rette den Elf!");
 		wurzel.setCenter(spielfeld);
 		wurzel.setLeft(spielsteuerung.getLayoutPane());
 		Level level = LevelIO.levelLaden(Assets.class.getResourceAsStream(leveldatei));
 		SpielZustand.getInstance().setAktuellerLevel(level);
 		SpielZustand.getInstance().setSpielStatus(SpielStatus.SPIELER_ZUG);
-		Scene szene = new Scene(wurzel, Konstanten.FENSTER_BREITE,Konstanten.FENSTER_HOEHE);
-		buehne.setTitle("WS 17/18 - PM2 - Rette den Elf!");
 		buehne.setScene(szene);
 		buehne.show();
 		spielfeld.neuzeichnen();
