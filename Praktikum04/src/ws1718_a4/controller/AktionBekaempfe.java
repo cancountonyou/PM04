@@ -24,17 +24,17 @@ public class AktionBekaempfe extends RichtungsAktion {
   public String verarbeite(List<Befehl> befehlskette) {
 
     if (befehlskette.size() != 2) {
-      return "Ungültige Befehlssyntax für BEKAEMPFE.";
+      return "Ungueltige Befehlssyntax fuer BEKAEMPFE.";
     }
 
     Befehl befehlGegner = befehlskette.get(0);
     if (befehlGegner != Befehl.GEGNER) {
-      return "Ungültige Befehlssyntax für BEKAEMPFE.";
+      return "Ungueltige Befehlssyntax fuer BEKAEMPFE.";
     }
 
     Befehl befehlRichtung = befehlskette.get(1);
     if (!richtungsBefehle.contains(befehlRichtung)) {
-      return "Ungültiger Richtungsbefehl: " + befehlRichtung.toString();
+      return "Ungueltiger Richtungsbefehl: " + befehlRichtung.toString();
     }
 
     /// Vorbereitung

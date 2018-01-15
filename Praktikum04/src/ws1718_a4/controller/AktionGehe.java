@@ -21,12 +21,12 @@ public class AktionGehe extends RichtungsAktion {
   @Override
   public String verarbeite(List<Befehl> befehlskette) {
     if (befehlskette.size() != 1) {
-      return "Ungültige Befehlskette.";
+      return "Ungueltige Befehlskette.";
     }
 
     Befehl befehl = befehlskette.get(0);
     if (!richtungsBefehle.contains(befehl)) {
-      return "Ungültiger Richtungsbefehl: " + befehl.toString();
+      return "Ungueltiger Richtungsbefehl: " + befehl.toString();
     }
 
     // Bewegung in die angegebene Richtung

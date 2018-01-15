@@ -16,17 +16,17 @@ public class AktionRette extends RichtungsAktion {
   @Override
   public String verarbeite(List<Befehl> befehlskette) {
     if (befehlskette.size() != 2) {
-      return "Ungültige Befehlssyntax für RETTE.";
+      return "Ungueltige Befehlssyntax fuer RETTE.";
     }
 
     Befehl befehlGegner = befehlskette.get(0);
     if (befehlGegner != Befehl.FREUND) {
-      return "Ungültige Befehlssyntax für RETTE.";
+      return "Ungueltige Befehlssyntax fuer RETTE.";
     }
 
     Befehl befehlRichtung = befehlskette.get(1);
     if (!richtungsBefehle.contains(befehlRichtung)) {
-      return "Ungültiger Richtungsbefehl: " + befehlRichtung.toString();
+      return "Ungueltiger Richtungsbefehl: " + befehlRichtung.toString();
     }
 
     /// Vorbereitung

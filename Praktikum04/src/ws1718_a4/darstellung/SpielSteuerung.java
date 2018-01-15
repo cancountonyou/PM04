@@ -28,9 +28,9 @@ public class SpielSteuerung {
 
 	private Button spielNeuStarten, ok, löschen;
 
-	private TextField ausgeschrieben, spielanweisung;
+	private TextField  spielanweisung;
 
-	private TextFlow befehle;
+	private TextFlow befehle,ausgeschrieben;
 	
 	private VBox layoutPane;
 	
@@ -39,6 +39,10 @@ public class SpielSteuerung {
 	public SpielSteuerung(Controller c1) {
 		layoutPane = new VBox(10);
 		layoutPane.setPadding(new Insets(20));
+	
+
+		ausgeschrieben = new TextFlow();
+		
 		
 
 		spielNeuStarten = new Button("Spiel neu Starten!");
@@ -47,12 +51,13 @@ public class SpielSteuerung {
 			SpielZustand.getInstance().setAktuellerLevel(level);
 			SpielZustand.getInstance().setSpielStatus(SpielStatus.SPIELER_ZUG);
 			spielanweisung.clear();
-			ausgeschrieben.clear();
+			ausgeschrieben.getChildren().clear();
 		});
 		layoutPane.getChildren().add(spielNeuStarten);
 	
 
 		befehle = new TextFlow();
+		befehle.setPrefWidth(200);
 		
 		for (Befehl befehl : Konstanten.Befehl.values()) {
 			Label label = new Label(befehl.name());
@@ -109,13 +114,16 @@ public class SpielSteuerung {
 		okLöschen.setSpacing(10);
 		ok = new Button("OK");
 		ok.setOnAction((ereignis) -> {
+			ausgeschrieben.getChildren().clear();
 			String cmd = spielanweisung.getText();
 			AnweisungsCheck zuchecken = new AnweisungsCheck(cmd);
 			if (zuchecken.check()) {
 				String mitteilung = c1.befehlVerarbeiten(cmd);
-				ausgeschrieben.setText(mitteilung);
+				Label mitteilungLabel = new Label(mitteilung);
+				ausgeschrieben.getChildren().add(mitteilungLabel);
 			} else {
-				ausgeschrieben.setText("Ungültiger Befehl");
+				Label mitteilungLabel = new Label("Ungültiger Befehl");
+				ausgeschrieben.getChildren().add(mitteilungLabel);
 			}
 		});
 		
@@ -132,7 +140,6 @@ public class SpielSteuerung {
 		layoutPane.getChildren().add(okLöschen);
 	
 
-		ausgeschrieben = new TextField();
 		layoutPane.getChildren().add(ausgeschrieben);
 		
 	}
